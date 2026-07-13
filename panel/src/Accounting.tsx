@@ -6,7 +6,6 @@ import {
   Wallet, 
   Filter, 
   Calendar, 
-  MoreHorizontal,
   ChevronRight,
   TrendingUp,
   CreditCard,
@@ -22,16 +21,11 @@ import {
   DollarSign
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
-  Cell,
-  LineChart,
-  Line,
   AreaChart,
   Area
 } from 'recharts';
