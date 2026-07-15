@@ -1,90 +1,120 @@
 # Kortex Educational Platform
 
-> [!NOTE]
-> **Status: Active Development** — This project is currently in active development. Features are continuously being updated, refactored, and improved.
+> **Status: Active Development** — Features are continuously being updated and improved.
 
-Kortex is a comprehensive, full-stack education management and YKS preparation platform designed for institutions, teachers, students, and parents. The project is specifically tailored around the Turkish education system, including YKS-focused study flows, institutional workflows, parent communication, attendance tracking, and student progress monitoring.
+Kortex is a full-stack education management and YKS preparation platform built for institutions, teachers, students, and parents. It covers the end-to-end workflow of Turkish educational institutions: class management, attendance tracking, student progress monitoring, AI-powered tutoring, parent communication, and institutional analytics.
 
-This repository is a sanitized public demo of the project. It keeps the real application structure, UI code, backend routes, data models, and mobile app flow visible for portfolio review, while removing private infrastructure, production secrets, and external service credentials.
+This repository is a sanitized public version of the project. The application structure, UI code, backend routes, data models, and mobile app flow are fully visible for review, while production secrets and private infrastructure have been removed.
 
-### Key Features & Architecture
+---
 
-* **Multi-Role System:** Dedicated views and permission layers for institution admins, teachers, students, and parents.
-* **Smart Cached AI Solver:** A Gemini-powered AI tutor that solves student questions. It integrates a 4-layer caching system (traditional text hash, image pHash, semantic summary hash, and vector embedding similarity) to minimize LLM token costs.
-* **Scoped Teacher Permissions:** Advanced security filters ensuring teachers can only access data (students, attendance, reports) for their assigned classes.
-* **Parent CRM & Deep Linking:** Automated weekly progress reporting to parents via WhatsApp and push notifications, with secure parent login activated through deep links (`yks://parent-activate`).
-* **Integrity Monitor:** An in-app PDF homework viewer that logs background switch activities to prevent cheating during assignments.
+## Features
 
-### Repository Structure
+### 📱 Student Mobile App (Flutter)
 
-```text
-backend/     Node.js, Express, Prisma, PostgreSQL backend
-panel/       React, Vite institution management panel
-mobile-app/  Flutter student mobile application
-```
+**AI-Powered Learning**
+- **AI Tutor & Chat:** Students photograph questions, on-device OCR extracts the text, and Gemini generates step-by-step solutions with LaTeX math rendering.
+- **Smart Quiz Engine:** AI-generated quizzes adapted to the student's current curriculum and weak topics.
+- **Explanation Screen:** Detailed breakdowns of solutions with math formatting support.
 
-### Tech Stack
+**Study Tools**
+- **Topic Map:** Visual curriculum map showing progress across YKS subjects and sub-topics.
+- **Curriculum Tracker:** Full YKS müfredat coverage with completion tracking per subject.
+- **Study Timer:** Pomodoro-style session timer with study data logging.
+- **Library:** Saved questions, study notes, and reference materials.
+- **Daily Quests & Achievements:** Gamified study goals to maintain student engagement.
 
-* **Management Panels (panel & admin):** React 19, Vite, TypeScript, Tailwind CSS, Recharts, Framer Motion. State is managed natively via React Context and state hooks.
-* **Mobile App (mobile-app):** Flutter (Dart), on-device OCR via native platform channels (Vision API), safe_device for Jailbreak/Root detection, and app_links for deep linking.
-* **Backend:** Node.js, Express, Prisma ORM, PostgreSQL database, JWT authentication, Firebase Admin SDK for notifications.
+**Guidance & Communication**
+- **Guidance Screen:** Access to institutional guidance counselor resources and appointment scheduling.
+- **Parent Notification View:** Students can see what progress reports their parents receive.
+- **Onboarding Flow:** First-time setup with class selection, subject preferences, and study goal configuration.
 
-### Local Setup
+---
 
-Install and configure dependencies for each component:
+### 🖥️ Institution Management Panel (React)
 
-1. Backend Setup:
+**Class & Student Management**
+- **Class List & Detail:** Create classes, assign teachers, view class-level analytics.
+- **Student List & Detail:** Individual student profiles with performance history, attendance records, and AI usage stats.
+- **Student Accounts:** Bulk account creation and credential management for institutions.
+
+**Academic Operations**
+- **Attendance System:** Daily attendance tracking with teacher-scoped permissions — teachers can only mark attendance for their assigned classes.
+- **Exam Center:** Create, assign, and grade exams with per-student result tracking.
+- **Content Assignment Center:** Assign homework, PDFs, and study materials to specific classes or individual students.
+- **Class Progress:** Aggregated class-level performance dashboards with subject breakdowns.
+
+**Institutional Tools**
+- **Guidance Center:** Counselor tools for student follow-up, appointment management, and intervention tracking.
+- **Parent CRM:** Manage parent contacts, automate weekly WhatsApp progress reports, trigger push notifications, and activate parent accounts via deep links (`yks://parent-activate`).
+- **Accounting Module:** Tuition tracking, payment status, and financial reporting per student.
+- **Dashboard:** Institution-wide KPIs — active students, attendance rates, AI usage metrics, exam averages.
+- **Settings:** Institution configuration, teacher role management, and system preferences.
+
+---
+
+### ⚙️ Backend (Node.js + Express)
+
+- **18 Route Modules:** Auth, students, classes, attendance, exams, AI chat, smart quiz, guidance, parent, accounting, dashboard, reports, assigned content, study data, appointments, institution, admin, users.
+- **AI Service (v3):** Evolved through 3 iterations — current version handles multi-turn chat, OCR input, curriculum-aware responses, and usage tracking.
+- **Parent Push Service:** Firebase Admin SDK integration for automated push notifications to parent devices.
+- **Scoped Permissions:** Middleware-level security ensuring teachers access only their assigned class data across all endpoints.
+- **Curriculum Seeder:** Pre-loaded YKS curriculum data covering all subjects and sub-topics.
+
+---
+
+## Tech Stack
+
+| Component | Technologies |
+|-----------|-------------|
+| Backend | Node.js, Express, Prisma ORM, PostgreSQL, JWT auth, Firebase Admin SDK |
+| Management Panel | React 19, Vite, TypeScript, Tailwind CSS, Recharts, Framer Motion |
+| Mobile App | Flutter, on-device OCR (platform Vision API), safe_device (jailbreak detection), app_links (deep linking) |
+
+---
+
+## Setup
+
+### Backend
 ```bash
 cd backend
-# 1. Create environment file from the template
 cp .env.example .env
-
-# 2. Start PostgreSQL container via Docker (or configure a local database inside .env)
-docker-compose up -d
-
-# 3. Install dependencies
+docker-compose up -d          # Start PostgreSQL (or configure local DB in .env)
 npm install
-
-# 4. Generate Prisma client & initialize database with mock/seed data
 npx prisma generate
 npx prisma db push
 npx prisma db seed
-
-# 5. Run the development server
 npm run dev
 ```
 
-2. Panel Setup:
+### Panel
 ```bash
 cd panel
 npm install
 npm run dev
 ```
 
-3. Mobile App Setup:
+### Mobile App
 ```bash
 cd mobile-app
 flutter pub get
-# Run on your preferred emulator, simulator, or browser
-flutter run -d chrome
+flutter run -d chrome          # Or your preferred emulator/device
 ```
 
-### AI-Agent Orchestrated Development (Case Study)
+---
 
-The defining aspect of this project is **how it was delivered**. The codebase was developed and refactored by working entirely as a human-in-the-loop orchestrator directing autonomous AI agents.
+## Development Approach
 
-#### 1. The AI-Orchestrator Paradigm
-Instead of focusing on boilerplate syntax, the developer's role centered on **first-principles system engineering**:
-* **System Architecture:** Designing how the Flutter client interacts with the Express REST API, how Prisma handles relations in PostgreSQL, and how user roles map across the database.
-* **Agent Direction:** Translating logical flows into structured prompts for code agents to generate UI components, handle state syncs, and wire up backend routes.
-* **Safe Public Mocking:** Isolating production boundaries. We refactored external API routes (like Gemini Vision and Firebase Notifications) into clean, local mock handlers so the app runs out-of-the-box.
-* **Refactoring & Cleanups via Multi-Agent Systems:** When removing legacy modules (like the local Python math service), multiple specialized agents were spawned. One agent refactored the backend code to safely bypass the service, while a separate **Code Integrity Auditor** agent audited the changes, successfully catching a logic bug regarding Gemini's JSON response configuration and resolving it before deployment.
+This project was developed using AI-assisted engineering workflows with human-in-the-loop verification. The developer's role focused on system architecture, data modeling, and quality assurance — leveraging static analysis (`flutter analyze`, `npm run build`, `node --check`) and interactive debugging to validate all generated code.
 
-#### 2. The Verification Loop (Human-in-the-Loop)
-A strict feedback loop was established to guarantee code quality:
-* **Static Analysis & Compilers:** Used `flutter analyze` to catch Dart type errors, `npm run build` to verify React/TS bundling, and `node --check` to catch JavaScript syntax errors on the backend.
-* **Interactive Debugging:** Parsed compilation stacks and runtime error logs, feeding the stack traces back to the agent with logical constraints to debug the issues systematically.
+---
 
-### Purpose
+## Purpose
 
-The goal of this repository is to demonstrate architecture, product thinking, UI implementation, backend organization, and mobile app development across a real education technology project without exposing private customer data or production infrastructure.
+This repository demonstrates architecture, product thinking, UI implementation, backend organization, and mobile development across a real education technology project — without exposing private customer data or production infrastructure.
+
+---
+
+## License
+
+MIT
